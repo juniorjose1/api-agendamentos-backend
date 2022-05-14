@@ -6,6 +6,7 @@ import lombok.Builder;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Builder
@@ -18,8 +19,11 @@ public class Scheduling implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime dateTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private OffsetDateTime startDateTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private OffsetDateTime endDateTime;
 
     @ManyToOne
     private Client client;
@@ -30,9 +34,10 @@ public class Scheduling implements Serializable {
     public Scheduling() {
     }
 
-    public Scheduling(Long id, LocalDateTime dateTime, Client client, Services services) {
+    public Scheduling(Long id, OffsetDateTime startDateTime, OffsetDateTime endDateTime, Client client, Services services) {
         this.id = id;
-        this.dateTime = dateTime;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.client = client;
         this.services = services;
     }
@@ -41,12 +46,20 @@ public class Scheduling implements Serializable {
         return id;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public OffsetDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setStartDateTime(OffsetDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public OffsetDateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public Client getClient() {

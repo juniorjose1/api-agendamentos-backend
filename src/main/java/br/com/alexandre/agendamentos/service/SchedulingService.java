@@ -1,11 +1,17 @@
 package br.com.alexandre.agendamentos.service;
 
+import br.com.alexandre.agendamentos.client.CalendarGoogleClient;
+import br.com.alexandre.agendamentos.controller.GoogleCalendarController;
+import br.com.alexandre.agendamentos.dto.request.EventCalendarRequest;
 import br.com.alexandre.agendamentos.dto.request.SchedulingRequest;
 import br.com.alexandre.agendamentos.dto.response.SchedulingResponse;
+import br.com.alexandre.agendamentos.dto.response.TokenGoogleResponse;
 import br.com.alexandre.agendamentos.model.Client;
 import br.com.alexandre.agendamentos.model.Scheduling;
 import br.com.alexandre.agendamentos.model.Services;
+import br.com.alexandre.agendamentos.model.TokenGoogle;
 import br.com.alexandre.agendamentos.repository.SchedulingRepository;
+import feign.FeignException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +30,16 @@ public class SchedulingService {
     private ServicesService servicesService;
 
     @Autowired
+    private CalendarGoogleClient calendarGoogleClient;
+
+    @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private TokenGoogleService tokenGoogleService;
+
+    @Autowired
+    private GoogleCalendarController googleCalendarController;
 
     public List<SchedulingResponse> getAll(){
         List<Scheduling> schedules = repository.findAll();
@@ -43,10 +58,28 @@ public class SchedulingService {
         Scheduling sche = Scheduling.builder()
                 .client(client)
                 .services(services)
-                .dateTime(request.getDateTime())
+                .startDateTime(request.getStartDateTime())
+                .endDateTime(request.getEndDateTime())
                 .build();
 
         repository.save(sche);
+
+        EventCalendarRequest eventCalendarRequest =
+                EventCalendarRequest.builder().summary(client.getName() + " - " + services.getName())
+                        .start(EventCalendarRequest.Start.builder().dateTime(request.getStartDateTime()).build())
+                        .end(EventCalendarRequest.End.builder().dateTime(request.getEndDateTime()).build())
+                        .build();
+
+        String accessToken = googleCalendarController.getAccessToken();
+
+        try {
+            calendarGoogleClient.insertEvent("Bearer " + accessToken, eventCalendarRequest);
+        } catch(FeignException.Unauthorized e){
+            TokenGoogleResponse accessTokenUpdated = googleCalendarController.refreshToken();
+            calendarGoogleClient.insertEvent("Bearer " + accessTokenUpdated.getAccessToken(), eventCalendarRequest);
+        }
+
+
     }
 
     public void put(Long id, SchedulingRequest request) {
