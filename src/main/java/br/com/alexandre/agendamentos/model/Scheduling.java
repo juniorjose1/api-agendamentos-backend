@@ -19,6 +19,8 @@ public class Scheduling implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String idEvent;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private OffsetDateTime startDateTime;
 
@@ -34,8 +36,9 @@ public class Scheduling implements Serializable {
     public Scheduling() {
     }
 
-    public Scheduling(Long id, OffsetDateTime startDateTime, OffsetDateTime endDateTime, Client client, Services services) {
+    public Scheduling(Long id, String idEvent, OffsetDateTime startDateTime, OffsetDateTime endDateTime, Client client, Services services) {
         this.id = id;
+        this.idEvent = idEvent;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.client = client;
@@ -44,6 +47,14 @@ public class Scheduling implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public String getIdEvent() {
+        return idEvent;
+    }
+
+    public void setIdEvent(String idEvent) {
+        this.idEvent = idEvent;
     }
 
     public OffsetDateTime getStartDateTime() {

@@ -22,10 +22,10 @@ public class SchedulingController {
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
-    /*@GetMapping("/{idCLient}")
-    public ResponseEntity<List<SchedulingResponse>> getByIdClient(@PathVariable Long idClient){
-        return new ResponseEntity<>(service.getByIdClient(idClient), HttpStatus.OK);
-    }*/
+    @GetMapping("/{cellPhone}")
+    public ResponseEntity<List<SchedulingResponse>> getByIdClient(@PathVariable String cellPhone){
+        return new ResponseEntity<>(service.getByCellPhone(cellPhone), HttpStatus.OK);
+    }
 
     @PostMapping
     public ResponseEntity<?> post(@RequestBody SchedulingRequest request){

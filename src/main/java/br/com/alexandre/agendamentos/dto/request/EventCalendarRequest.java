@@ -16,6 +16,8 @@ public class EventCalendarRequest {
 
     private String summary;
 
+    private String description;
+
     @Data
     @Builder
     public static class Start{

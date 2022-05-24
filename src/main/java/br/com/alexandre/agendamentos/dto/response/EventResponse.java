@@ -1,0 +1,19 @@
+package br.com.alexandre.agendamentos.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class EventResponse implements Serializable {
+
+    private static final long serialVersionUID = 3658628669525520056L;
+
+    private String id;
+}
